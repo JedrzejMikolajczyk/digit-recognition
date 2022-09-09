@@ -68,6 +68,7 @@ class Predictor():
         print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
             test_loss, correct, len(test_loader.dataset),
             100. * correct / len(test_loader.dataset)))
+        return test_loss
         
     
                 
@@ -80,7 +81,7 @@ class Predictor():
         parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
                             help='input batch size for testing (default: 1000)')
         parser.add_argument('--epochs', type=int, default=20, metavar='N',
-                            help='number of epochs to train (default: 14)')
+                            help='number of epochs to train (default: 20)')
         parser.add_argument('--lr', type=float, default=1.0, metavar='LR',
                             help='learning rate (default: 1.0)')
         parser.add_argument('--gamma', type=float, default=0.7, metavar='M',
@@ -118,12 +119,16 @@ class Predictor():
     
         scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
         
+        best_loss =  999999
+        
         for epoch in range(1, args.epochs + 1):
             self.train(args, train_loader, optimizer, epoch)
-            test(test_loader)
+            current_loss = test(test_loader)
             scheduler.step()
-            if args.save_self.model:
-                torch.save(self.model.state_dict(), "mnist_cnn.pt")
+            if current_loss < best_loss:
+                best_loss = current_loss
+                if args.save_self.model:
+                    torch.save(self.model.state_dict(), "mnist_cnn.pt")
 
 
 if __name__ == '__main__':
