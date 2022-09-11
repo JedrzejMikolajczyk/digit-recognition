@@ -1,5 +1,6 @@
 # digit-recognition
  
+![](https://github.com/JedrzejMikolajczyk/digit-recognition/blob/main/GIF.gif) 
  
 ## installation
 ```
