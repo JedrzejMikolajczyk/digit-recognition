@@ -1,5 +1,10 @@
 #based on the pytorch example https://github.com/pytorch/examples/tree/main/mnist
 import argparse
+import sys
+import os
+import json
+import importlib
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -7,18 +12,37 @@ import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
 
-from cnn import Net
-
 class Predictor():
     def __init__(self):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        self.model = Net().to(self.device)
+        
+        #load model name, code filename and weights filename
+        self.models_dict = self.load_from_json("settings.json")
+        self.models = self.import_models(self.models_dict)
+        self.load_model("CNN")
+      
+    #load json file
+    def load_from_json(self, filename):
+        with open(filename, "r") as settings:
+            models_dict = json.load(settings)
+        return models_dict
+      
+        
+    #{name:[model_filename, weights_filename]}
+    def import_models(self, models_dict):
+        models = {}
+        for name in models_dict:
+            models[name] = getattr(importlib.import_module('models.' + models_dict[name]['model']), name)
+        return models
+    
+    #load model with weights
+    def load_model(self, key):
+        self.model = self.models[key]().to(self.device)
         try:
-            self.model.load_state_dict(torch.load("mnist_cnn.pt"))
+            self.model.load_state_dict(torch.load('weights/' + self.models_dict[key]['weights']))
         except:
-            print("Weights file not found")
-        
-        
+            print("Weights file not found")  
+            
     def predict(self, x) -> torch.tensor:
         """
         Parameters
@@ -90,8 +114,6 @@ class Predictor():
                             help='random seed (default: 1)')
         parser.add_argument('--log-interval', type=int, default=10, metavar='N',
                             help='how many batches to wait before logging training status')
-        parser.add_argument('--save-self.model', action='store_true', default=True,
-                            help='For Saving the current self.model')
         args = parser.parse_args()
         
         print(args.epochs)
@@ -113,7 +135,7 @@ class Predictor():
         train_loader = torch.utils.data.DataLoader(dataset_training, **train_kwargs)
         test_loader = torch.utils.data.DataLoader(dataset_test, **test_kwargs)
     
-        self.model = Net().to(self.device)
+        self.model = CNN().to(self.device)
         
         optimizer = optim.Adadelta(self.model.parameters(), lr=args.lr)
     
@@ -123,12 +145,11 @@ class Predictor():
         
         for epoch in range(1, args.epochs + 1):
             self.train(args, train_loader, optimizer, epoch)
-            current_loss = test(test_loader)
+            current_loss = self.test(test_loader)
             scheduler.step()
             if current_loss < best_loss:
                 best_loss = current_loss
-                if args.save_self.model:
-                    torch.save(self.model.state_dict(), "mnist_cnn.pt")
+                torch.save(self.model.state_dict(), "mnist_net.pt")
 
 
 if __name__ == '__main__':
