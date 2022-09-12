@@ -1,0 +1,6 @@
+{
+  "CNN": {
+    "model": "cnn",
+    "weights": "mnist_cnn.pt"
+  }
+}
