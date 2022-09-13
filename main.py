@@ -92,7 +92,7 @@ class main:
         
         
         #models combobox
-        Label(self.display, text='Select model:', font=('arial 12')).pack()
+        Label(self.display, text='Selected model:', font=('arial 12')).pack()
         self.model_combobox = ttk.Combobox(self.display)
         #models_dict keys are displayed as selectable options
         self.model_combobox['values'] = list(self.predictor.models_dict)
