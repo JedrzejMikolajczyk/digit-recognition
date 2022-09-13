@@ -2,5 +2,9 @@
   "CNN": {
     "model": "cnn",
     "weights": "mnist_cnn.pt"
+  },
+  "FFN": {
+    "model": "ffn",
+    "weights": "mnist_ffn.pt"
   }
 }

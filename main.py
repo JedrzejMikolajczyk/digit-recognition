@@ -8,14 +8,14 @@ from torchvision import transforms
 class main:
     def __init__(self, root):
         self.root = root
+        self.predictor = Predictor()
         self.x = None
         self.y = None
         self.penwidth = 30
         self.drawWidgets()
         self.canv.bind('<B1-Motion>',self.paint)#drwaing the line 
         self.canv.bind('<ButtonRelease-1>',self.reset)
-
-    
+        
     def paint(self, e):
         if self.x and self.y:
             self.canv.create_line(self.x, self.y, e.x, e.y, width=self.penwidth, fill='black', capstyle=ROUND, smooth=True)        
@@ -32,8 +32,11 @@ class main:
 
     def clear(self):
         self.canv.delete(ALL)
+        
+    #def change_model(x):
+        #self.predictor.change model???
 
-    def canvas_prediction(self):
+    def canvas_prediction(self):    
         #get canvas' image
         x=self.root.winfo_rootx()+self.canv.winfo_x()
         y=self.root.winfo_rooty()+self.canv.winfo_y()
@@ -50,8 +53,10 @@ class main:
         #add batch dimension
         x = torch.unsqueeze(x, dim=0)
         
-        predictor = Predictor()
-        results = predictor.predict(x) * 100
+        #get currently selected model's id from combobox, use it to get model's key and use it to load the model
+        self.predictor.load_model(list(self.predictor.models_dict)[self.model_combobox.current()])
+        
+        results = self.predictor.predict(x) * 100
 
         self.updateTable(results)
     
@@ -84,6 +89,19 @@ class main:
             self.results.insert(END, "")
 
         self.prediction.pack(side=TOP)
+        
+        
+        #models combobox
+        Label(self.display, text='Select model:', font=('arial 12')).pack()
+        self.model_combobox = ttk.Combobox(self.display)
+        #models_dict keys are displayed as selectable options
+        self.model_combobox['values'] = list(self.predictor.models_dict)
+        # prevent typing a value
+        self.model_combobox['state'] = 'readonly'
+        #set default value to models_dict's 1st entry
+        self.model_combobox.set(list(self.predictor.models_dict)[0])
+        self.model_combobox.pack(padx=5, pady=5)
+        
         
         #create frame with buttons
         self.buttons = Frame(self.display, padx = 10, pady = 10)
