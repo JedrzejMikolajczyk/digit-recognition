@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 class FFN(nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
+        super(FFN, self).__init__()
         
         self.fc1 = nn.Linear(28*28, 14*28)
         self.fc2 = nn.Linear(14*28, 7*28)
