@@ -2,10 +2,11 @@ from tkinter import *
 from tkinter import ttk, colorchooser
 from PIL import ImageGrab, ImageOps
 from predictor import Predictor
+import json_utils
 import torch
 from torchvision import transforms
 
-class main:
+class Main:
     def __init__(self, root):
         self.root = root
         self.predictor = Predictor()
@@ -106,10 +107,10 @@ class main:
         #create frame with buttons
         self.buttons = Frame(self.display, padx = 10, pady = 10)
         self.buttons.pack(side=BOTTOM)
-        predict_button = Button(self.buttons, text ="Predict", command = self.canvas_prediction, padx = 5, pady = 5)
-        predict_button.pack(side=LEFT)
-        clear_button = Button(self.buttons, text ="Clear", command = self.clear, padx = 5, pady = 5)
-        clear_button.pack(side=LEFT)
+        self.predict_button = Button(self.buttons, text ="Predict", command = self.canvas_prediction, padx = 5, pady = 5)
+        self.predict_button.pack(side=LEFT)
+        self.clear_button = Button(self.buttons, text ="Clear", command = self.clear, padx = 5, pady = 5)
+        self.clear_button.pack(side=LEFT)
         
         #create pen_width slider
         self.controls = Frame(self.display, padx = 5, pady = 5)
@@ -126,14 +127,70 @@ class main:
         #add option menu #TODO add more options
         menu = Menu(self.root)
         self.root.config(menu=menu)
-        optionmenu = Menu(menu)
+        menu.add_command(label='Add model',command=self.popup) 
+
         
-        menu.add_cascade(label='Options',menu=optionmenu)
-        optionmenu.add_command(label='Exit',command=self.root.destroy) 
+    def popup(self):
+        self.w=PopupWindow(self.root, self.callback) 
+        self.root.wait_window(self.w.top)
+
+    def callback(self, a, b, c):
+        json_utils.write_to_json("settings.json", a, b, c)
+
+#popup window with form for adding new models
+class PopupWindow():
+    def __init__(self, master, callback):
+        top=self.top=Toplevel(master)
+        top.minsize(300, 200)
+        self.master = master
+        self.callback = callback
+        self.grid_frame = Frame(top, padx = 10, pady = 10)
+        self.grid_frame.pack(side=TOP)
+        # configure the grid
+        root.columnconfigure(0, weight=1)
+        root.columnconfigure(1, weight=3)
         
+        
+        # username
+        model_name_label = ttk.Label(self.grid_frame, text="Model name:")
+        model_name_label.grid(column=0, row=0, sticky=W, padx=5, pady=5)
+        
+        self.model_name = ttk.Entry(self.grid_frame)
+        self.model_name.grid(column=1, row=0, sticky=E, padx=5, pady=5)
+        
+        # password
+        model_file_label = ttk.Label(self.grid_frame, text="Model's file name':")
+        model_file_label.grid(column=0, row=1, sticky=W, padx=5, pady=5)
+        
+        self.model_file = ttk.Entry(self.grid_frame)
+        self.model_file.grid(column=1, row=1, sticky=E, padx=5, pady=5)
+        
+        # password
+        weights_file_label = ttk.Label(self.grid_frame, text="Model's weights file name':")
+        weights_file_label.grid(column=0, row=2, sticky=W, padx=5, pady=5)
+        
+        self.weights_file = ttk.Entry(self.grid_frame)
+        self.weights_file.grid(column=1, row=2, sticky=E, padx=5, pady=5)
+        
+        # ok button
+        ok_button = ttk.Button(top, text="OK", command=self.submit)
+        ok_button.pack()
+        # back button
+        back_button = ttk.Button(top, text="Back", command=self.cancel)
+        back_button.pack()
+        
+        #freeze main window until this one is closed
+        top.grab_set()
+        
+    def submit(self):
+        self.callback(self.model_name.get(), self.model_file.get(), self.weights_file.get())
+        self.top.destroy()
+        
+    def cancel(self):
+        self.top.destroy()
 
 if __name__ == '__main__':
     root = Tk()
-    main(root)
+    Main(root)
     root.title('Application')
     root.mainloop()
