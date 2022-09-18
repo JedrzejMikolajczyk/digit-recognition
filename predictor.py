@@ -2,8 +2,8 @@
 import argparse
 import sys
 import os
-import json
 import importlib
+import json_utils
 
 import torch
 import torch.nn as nn
@@ -15,28 +15,11 @@ from torch.optim.lr_scheduler import StepLR
 class Predictor():
     def __init__(self):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        
         #load model name, code filename and weights filename
-        self.models_dict = self.load_from_json("settings.json")
+        self.models_dict = json_utils.load_from_json("settings.json")
         self.models = self.import_models(self.models_dict)
         self.load_model("CNN")
-      
-    #load json file
-    def load_from_json(self, json_file):
-        with open(json_file, "r") as settings:
-            models_dict = json.load(settings)
-        return models_dict
-      
-    def write_to_json(self, json_file, model_name, model_file, weights_file):
-        with open(json_file, "r") as settings:
-            models_dict = json.load(settings)
-        models_dict[model_name] = {
-            "model": model_file,
-            "weights": weights_file}
-        with open(json_file, "w") as settings:
-            settings.write(json.dumps(models_dict))
-    
-        
+     
     #{name:[model_filename, weights_filename]}
     def import_models(self, models_dict):
         models = {}
