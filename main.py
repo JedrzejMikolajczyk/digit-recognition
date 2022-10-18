@@ -159,14 +159,14 @@ class PopupWindow():
         self.model_name.grid(column=1, row=0, sticky=E, padx=5, pady=5)
         
         # password
-        model_file_label = ttk.Label(self.grid_frame, text="Model's file name':")
+        model_file_label = ttk.Label(self.grid_frame, text="Model's file name:")
         model_file_label.grid(column=0, row=1, sticky=W, padx=5, pady=5)
         
         self.model_file = ttk.Entry(self.grid_frame)
         self.model_file.grid(column=1, row=1, sticky=E, padx=5, pady=5)
         
         # password
-        weights_file_label = ttk.Label(self.grid_frame, text="Model's weights file name':")
+        weights_file_label = ttk.Label(self.grid_frame, text="Model's weights file name:")
         weights_file_label.grid(column=0, row=2, sticky=W, padx=5, pady=5)
         
         self.weights_file = ttk.Entry(self.grid_frame)
