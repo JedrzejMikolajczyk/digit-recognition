@@ -15,9 +15,18 @@ pip install -r requirements.txt
 python main.py
 ```
 
-To use your own model and weights please add them to ```predictor.py```.   
-Support for adding models from the gui soon to be added.   
-Support for switching between models from the gui is soon to be added.
+## To add your model:
+
+To use your own model and weights please click 'Add model' and then specify your model's name, file, and weights' file.  
+
+|![](https://github.com/JedrzejMikolajczyk/digit-recognition/blob/main/picture1.png)|
+|-|
+
+Alternatively, you can add them manually to ```settings.json```  
+
+## Switching between models:
+|![](https://github.com/JedrzejMikolajczyk/digit-recognition/blob/main/GIF1.gif)|
+|-|
 
 ### To retrain weights:
 ```
