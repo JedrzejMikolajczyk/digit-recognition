@@ -15,7 +15,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-## To add your model:
+### To add your model:
 
 To use your own model and weights please click 'Add model' and then specify your model's name, file, and weights' file.  
 
@@ -24,7 +24,7 @@ To use your own model and weights please click 'Add model' and then specify your
 
 Alternatively, you can add them manually to ```settings.json```  
 
-## Switching between models:
+### Switching between models:
 |![](https://github.com/JedrzejMikolajczyk/digit-recognition/blob/main/GIF1.gif)|
 |-|
 
