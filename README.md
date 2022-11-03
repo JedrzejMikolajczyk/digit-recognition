@@ -1,4 +1,4 @@
-# MNIST Playground
+# MNIST Interface
 
 This project allows [PyTorch](https://github.com/pytorch) users working with the [MNIST dataset](http://yann.lecun.com/exdb/mnist/) to test how their models predict on their **custom input**.
 
